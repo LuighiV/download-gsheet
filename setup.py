@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="dlgsheet",
-    version="0.0.1",
+    version="0.0.2",
     author="Luighi Viton-Zorrilla",
     author_email="luighiavz@gmail.com",
     description="Script to Google Sheets to JSON files",
