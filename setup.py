@@ -28,7 +28,7 @@ setuptools.setup(
         'python-dotenv'],
     entry_points={
         'console_scripts': [
-            'dlgsheet=dlgsheet.__main__',
+            'dlgsheet=dlgsheet.cli:main',
         ],
     },
 )

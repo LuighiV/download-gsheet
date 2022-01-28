@@ -1,10 +1,11 @@
 from dlgsheet import config
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
+from pathlib import Path
 
-
-globalcredentials = service_account.Credentials.from_service_account_file(
-    config.google["credentialsfile"], scopes=config.google["scopes"])
+if(Path(config.google["credentialsfile"]).exists()):
+    globalcredentials = service_account.Credentials.from_service_account_file(
+        config.google["credentialsfile"], scopes=config.google["scopes"])
 
 
 def set_credentials(filename):

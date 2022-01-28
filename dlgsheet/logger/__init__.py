@@ -29,7 +29,7 @@ handler = logging.StreamHandler()
 handler.setLevel(LOG_LEVEL)
 handler.setFormatter(formatter)
 
-logger = logging.getLogger('scrapersave')
+logger = logging.getLogger('dlgsheet')
 logger.setLevel(LOG_LEVEL)
 logger.addHandler(handler)
 
