@@ -1,0 +1,5 @@
+colorlog==6.6.0
+google_api_python_client==2.36.0
+protobuf==3.19.3
+python-dotenv==0.19.2
+setuptools==59.1.1
