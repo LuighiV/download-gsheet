@@ -152,6 +152,7 @@ def download_all_tables(
         data = get_table_values(sheetname, spreadsheetid=spreadsheetid,
                                 credentials=credentials)
 
+        key_index = None
         if use_keys_table and keys_table_info is not None:
             if sheetname in keys_table_info["columns"]["tablename"]["data"]:
                 idx = keys_table_info["columns"]["tablename"]["data"].index(
