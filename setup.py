@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="dlgsheet",
-    version="0.0.3",
+    version="0.0.4",
     author="Luighi Viton-Zorrilla",
     author_email="luighiavz@gmail.com",
     description="Script to Google Sheets to JSON files",
@@ -21,9 +21,9 @@ setuptools.setup(
         "Operating System :: POSIX :: Linux ",
     ],
     packages=setuptools.find_packages(
-        include=['dlgsheet',
-                 'dlgsheet.*']
-    ),
+        include=[
+            'dlgsheet',
+            'dlgsheet.*']),
     include_package_data=True,
     python_requires=">=3.6",
     install_requires=[
