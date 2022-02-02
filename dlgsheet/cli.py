@@ -22,18 +22,66 @@ parser.add_option("-s", "--spreadsheet-id", dest="spreadsheetid",
                   help="set google spreadsheet id to write on")
 parser.add_option("-t", "--sheetname", dest="sheetname",
                   help="set google sheetname to write on")
+parser.add_option("-k", "--key-index", type="int", dest="key_index",
+                  help="set key index to generate object related to it")
+
+parser.add_option("-K", "--use-keys-table", action="store_true",
+                  dest="use_keys_table",
+                  default=False, help="use keys table in spreadsheet")
+
+parser.add_option("-T", "--keys-table",
+                  dest="keys_table",
+                  help="keys table name in spreadsheet. Default '_keys'")
+
+parser.add_option("-n", "--tablename-column",
+                  dest="tablename_column",
+                  help="tablename column in keys table. Default 'tablename'")
+
+parser.add_option("-i", "--key-index-column",
+                  dest="key_index_column",
+                  help="key index column in keys table. Default 'key_index'")
+
+
+# Reference https://stackoverflow.com/a/29301200/5107192
+def get_comma_separated_args(option, opt, value, parser):
+    setattr(parser.values, option.dest, value.split(','))
+
+
+parser.add_option(
+    "-B",
+    "--blacklist",
+    type="string",
+    action='callback',
+    callback=get_comma_separated_args,
+    dest="blacklist",
+    help="list of tables that won't be considered, separated by commas. Default '_keys'")
+
+
+def validate_index(index):
+
+    if index is not None:
+        try:
+            index = int(index)
+        except Exception as e:
+            logger.error(f"Entered index '{index}' is not an integer.")
+            exit(-1)
+    return index
+
 
 def main():
 
-    (options, _ ) = parser.parse_args()
+    (options, _) = parser.parse_args()
 
     if options.loglevel is not None:
-        setLoggerLevel(options.loglevel)
+        loglevel = options.loglevel
+    else:
+        loglevel = "info"
+
+    setLoggerLevel(loglevel)
 
     logger.debug(options)
 
     DEFAULT_FOLDER_NAME = "output"
-
 
     if(options.spreadsheetid is not None):
         spreadsheetid = options.spreadsheetid
@@ -65,7 +113,8 @@ def main():
     if(options.sheetname is not None):
 
         sheetname = options.sheetname
-        defaultfilename = os.path.join(DEFAULT_FOLDER_NAME, sheetname + ".json")
+        defaultfilename = os.path.join(
+            DEFAULT_FOLDER_NAME, sheetname + ".json")
 
         if(options.output is not None):
             filename = options.output
@@ -78,8 +127,14 @@ def main():
         logger.info("Downloading data from spreadsheet: " +
                     spreadsheetid + " from '" +
                     sheetname + "' to " + filename)
+
+        key_index = validate_index(options.key_index)
+        if key_index is not None:
+            logger.info(f"Using key index {key_index} for selected table.")
+
         download_table_values(sheetname, filename=filename,
-                              spreadsheetid=spreadsheetid, credentials=auth)
+                              spreadsheetid=spreadsheetid, credentials=auth,
+                              key_index=key_index)
 
         logger.info("Task finished")
         exit(0)
@@ -94,7 +149,35 @@ def main():
 
     logger.info("Downloading data from spreadsheet: " +
                 spreadsheetid + " to folder " + foldername)
-    download_all_tables(foldername=foldername,
-                        spreadsheetid=spreadsheetid, credentials=auth)
+
+    blacklist = options.blacklist
+    if blacklist is not None:
+        logger.info(f"Blacklisting sheets: {blacklist}")
+
+    if(options.use_keys_table):
+
+        logger.info("Using keys table in spreadsheet to set keys to tables")
+
+        download_all_tables(foldername=foldername,
+                            blacklist=blacklist,
+                            spreadsheetid=spreadsheetid,
+                            credentials=auth,
+                            use_keys_table=options.use_keys_table,
+                            keys_table=options.keys_table,
+                            tablename_column=options.tablename_column,
+                            key_index_column=options.key_index_column)
+
+    else:
+
+        key_index = validate_index(options.key_index)
+
+        if key_index is not None:
+            logger.info(f"Using key index {key_index} for all tables.")
+
+        download_all_tables(foldername=foldername,
+                            blacklist=blacklist,
+                            spreadsheetid=spreadsheetid,
+                            credentials=auth,
+                            key_index=key_index)
 
     logger.info("Task finished")

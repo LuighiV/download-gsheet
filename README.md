@@ -91,6 +91,29 @@ dlgsheet [options]
 
   Set google sheetname to write on
 
+* `-k KEY_INDEX, --key-index=KEY_INDEX`
+
+  Set key index to generate object related to it
+
+* `-K, --use-keys-table`
+
+  Use keys table in spreadsheet
+
+* `-T KEYS_TABLE, --keys-table=KEYS_TABLE`
+
+  Keys table name in spreadsheet. Default '_keys'
+
+* `-n TABLENAME_COLUMN, --tablename-column=TABLENAME_COLUMN`
+
+  Tablename column in keys table. Default 'tablename'
+
+* `-i KEY_INDEX_COLUMN, --key-index-column=KEY_INDEX_COLUMN`
+
+  Key index column in keys table. Default 'key_index'
+
+* `-B BLACKLIST, --blacklist=BLACKLIST`
+
+  List of tables that won't be considered, separated by commas. Default '_keys'
 
 From these options, providing the `--spreadsheet-id` is mandatory either via the
 command line or via an environmental variable `GOOGLE_SPREADSHEET_ID`.
@@ -136,7 +159,128 @@ path, so you can call as:
 dlgsheet [options] 
 ```
 
-## Licencia
+## Use cases
+
+### Single sheet
+
+```
+dlgsheet --sheetname SHEETNAME 
+```
+
+Using in a spreadsheet which has a  `SHEETNAME` sheet  with the following
+values:
+
+| key_1     | key_2     | key_3     |
+| --------- | --------- | --------- |
+| value_1_1 | value_1_2 | value_1_3 |
+| value_2_1 | value_2_2 | value_2_3 |
+| value_3_1 | value_3_2 | value_3_3 |
+
+The results will be a file with the name `SHEETNAME.json` in the folder
+`output`, with the following info:
+
+```
+[
+    {
+        "key_1": "value_1_1",
+        "key_2": "value_1_2",
+        "key_3": "value_1_3"
+    },
+    {
+        "key_1": "value_2_1",
+        "key_2": "value_2_2",
+        "key_3": "value_2_3"
+    },
+    {
+        "key_1": "value_3_1",
+        "key_2": "value_3_2",
+        "key_3": "value_3_3"
+    }
+]
+```
+
+### Single sheet with key index
+
+```
+dlgsheet --sheetname SHEETNAME --key-index 0
+```
+
+Using in a spreadsheet which has a  `SHEETNAME` sheet  with the following
+values:
+
+| key_1     | key_2     | key_3     |
+| --------- | --------- | --------- |
+| value_1_1 | value_1_2 | value_1_3 |
+| value_2_1 | value_2_2 | value_2_3 |
+| value_3_1 | value_3_2 | value_3_3 |
+
+The results will be a file with the name `SHEETNAME.json` in the folder
+`output`, with the following info:
+
+```
+{
+    "value_1_1": {
+        "key_2": "value_1_2",
+        "key_3": "value_1_3"
+    },
+    "value_2_1": {
+        "key_2": "value_2_2",
+        "key_3": "value_2_3"
+    },
+    "value_3_1": {
+        "key_2": "value_3_2",
+        "key_3": "value_3_3"
+    }
+}
+```
+
+### All sheets in spreadsheet
+
+```
+dlgsheet 
+```
+
+It saves all the sheets except those in the blacklist, by default '_keys'. The
+data is saved to the folder `output` with one file for each sheet.
+
+
+### All sheets in spreadsheet with key index
+
+```
+dlgsheet  --key-index 0
+```
+
+It saves all the sheets except those in the blacklist, by default '_keys'. The
+data is saved to the folder `output` with one file for each sheet, but in this
+case uses the column index 0 to obtain the object for all the sheets. If the
+index is out of the range in a sheet, the generation is skipped in this case.
+
+### All sheets in spreadsheet with a sheet configuration
+
+```
+dlgsheet  --use-keys-table
+```
+
+In this case, it uses a keys' table (by default with `_keys` name) where it has
+the information about the sheets that should be saved related to a specified
+key and the key index in the columns for each sheet.
+
+The keys' table must have the following structure:
+
+| tablename   | key_index |
+| ----------- | --------- |
+| sheet_1     | 0         |
+| sheet_3     | 0         |
+| sheet_5     | 0         |
+
+Where `sheet_x` represents the sheet name in the spreadsheet that will use a
+key index and the values in the `key_index` column is the position of the
+column that will be used as keys for the generated object.
+
+If the spreadsheet has other sheets that are not present in the `tablename`
+column, then the generation is without considering an index.
+
+## License
 
 Copyright 2021 Luighi Viton-Zorrilla
 

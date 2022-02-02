@@ -6,6 +6,21 @@ load_dotenv()
 google = {
     "spreadsheetid": os.getenv("GOOGLE_SPREADSHEET_ID"),
     "credentialsfile": os.getenv("GOOGLE_AUTH_FILENAME", "key.json"),
-    "defaultsheet": os.getenv("GOOGLE_SHEETNAME", "to_download"),
     "scopes": ['https://www.googleapis.com/auth/spreadsheets']
+}
+
+blacklist = ["_keys"]
+
+keys_table = {
+    "name": "_keys",
+    "columns": {
+        "tablename": {
+            "name": "tablename",
+            "default_index": 0
+        },
+        "key_index": {
+            "name": "key_index",
+            "default_index": 1
+        }
+    }
 }

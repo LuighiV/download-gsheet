@@ -6,7 +6,7 @@ logging_levels = [logging.CRITICAL, logging.ERROR, logging.WARNING,
                   logging.INFO, logging.DEBUG]
 
 # Based on https://stackoverflow.com/a/23964880/5107192
-LOG_LEVEL = logging.INFO
+LOG_LEVEL = logging.DEBUG
 
 logging.root.setLevel(LOG_LEVEL)
 
